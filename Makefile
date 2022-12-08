@@ -25,6 +25,13 @@ check_black:
 	black --check --fast \
     examples/docs_snippets
 
+# Currently skipping:
+# "examples/assets_smoke_test",  # (2022-12-21) disabled due to build failures
+pyright:
+	python scripts/run-pyright.py \
+		. \
+		examples/project_fully_featured
+
 ruff:
 	ruff --fix .
 
