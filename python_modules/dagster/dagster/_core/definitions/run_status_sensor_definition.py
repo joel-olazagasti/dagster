@@ -13,11 +13,10 @@ from typing import (
     overload,
 )
 
-import pendulum
-
 import dagster._check as check
 from dagster._annotations import public
 from dagster._core.definitions.instigation_logger import InstigationLogger
+import dagster._seven.compat.pendulum as pendulum
 from dagster._core.errors import (
     DagsterInvalidDefinitionError,
     DagsterInvalidInvocationError,
