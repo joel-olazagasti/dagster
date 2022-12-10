@@ -31,7 +31,7 @@ def resource_invocation_result(
     val_or_gen = (
         resource_fn(_init_context)
         if is_context_provided(resource_fn)
-        else resource_fn()  # type: ignore
+        else resource_fn()  # type: ignore (strict type guard)
     )
     if inspect.isgenerator(val_or_gen):
 
