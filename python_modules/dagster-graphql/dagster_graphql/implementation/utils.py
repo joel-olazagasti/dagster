@@ -19,8 +19,13 @@ from typing import (
     Tuple,
     Type,
     TypeVar,
+    Union,
     cast,
 )
+
+from dagster_graphql.schema.errors import GrapheneError
+from graphene import ResolveInfo
+from typing_extensions import ParamSpec, TypeAlias
 
 import dagster._check as check
 from dagster._core.definitions.events import AssetKey
@@ -119,8 +124,8 @@ class ErrorCapture:
             ErrorCapture.observer.reset(token)
 
 
-def capture_error(fn: T_Callable) -> T_Callable:
-    def _fn(*args, **kwargs):
+def capture_error(fn: Callable[P, T]) -> Callable[P, Union[T, GrapheneError, GraphenePythonError]]:
+    def _fn(*args: P.args, **kwargs: P.kwargs):
         try:
             return fn(*args, **kwargs)
         except UserFacingGraphQLError as de_exception:
@@ -129,7 +134,7 @@ def capture_error(fn: T_Callable) -> T_Callable:
             ErrorCapture.observer.get()(exc)
             return ErrorCapture.on_exception(sys.exc_info())  # type: ignore
 
-    return cast(T_Callable, _fn)
+    return _fn
 
 
 class UserFacingGraphQLError(Exception):
