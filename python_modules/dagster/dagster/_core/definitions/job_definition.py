@@ -1,5 +1,6 @@
 import importlib
 import os
+from typing_extensions import Self
 import warnings
 from functools import update_wrapper
 from typing import (
@@ -428,7 +429,7 @@ class JobDefinition(PipelineDefinition):
         self,
         op_selection: Optional[Sequence[str]] = None,
         asset_selection: Optional[AbstractSet[AssetKey]] = None,
-    ):
+    ) -> Self:
         check.invariant(
             not (op_selection and asset_selection),
             (
@@ -446,7 +447,7 @@ class JobDefinition(PipelineDefinition):
     def _get_job_def_for_asset_selection(
         self,
         asset_selection: Optional[AbstractSet[AssetKey]] = None,
-    ) -> "JobDefinition":
+    ) -> Self:
         asset_selection = check.opt_set_param(asset_selection, "asset_selection", AssetKey)
 
         nonexistent_assets = [
@@ -492,7 +493,7 @@ class JobDefinition(PipelineDefinition):
     def _get_job_def_for_op_selection(
         self,
         op_selection: Optional[Sequence[str]] = None,
-    ) -> "JobDefinition":
+    ) -> Self:
         if not op_selection:
             return self
 

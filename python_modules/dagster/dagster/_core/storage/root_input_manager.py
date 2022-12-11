@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from functools import update_wrapper
-from typing import TYPE_CHECKING, AbstractSet, Callable, Optional, Union, cast
+from typing import TYPE_CHECKING, AbstractSet, Callable, Optional, Union, cast, overload
 
 import dagster._check as check
 from dagster._annotations import experimental
@@ -89,6 +89,23 @@ class RootInputManager(InputManager):
         Returns:
             Any: The data object.
         """
+
+@overload
+def root_input_manager(
+    config_schema: InputLoadFn,
+) -> RootInputManagerDefinition:
+    ...
+
+
+@overload
+def root_input_manager(
+    config_schema: Optional[CoercableToConfigSchema] = None,
+    description: Optional[str] = None,
+    input_config_schema: Optional[CoercableToConfigSchema] = None,
+    required_resource_keys: Optional[AbstractSet[str]] = None,
+    version: Optional[str] = None,
+) -> Callable[[InputLoadFn], RootInputManagerDefinition]:
+    ...
 
 
 @experimental

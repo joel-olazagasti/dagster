@@ -26,11 +26,13 @@ from typing import (
     Dict,
     Generator,
     Generic,
+    Iterable,
     Iterator,
     List,
     Mapping,
     Optional,
     Sequence,
+    Sized,
     Tuple,
     Type,
     TypeVar,
@@ -39,11 +41,10 @@ from typing import (
     overload,
 )
 
-import packaging.version
-from typing_extensions import Literal
-
 import dagster._check as check
 import dagster._seven as seven
+import packaging.version
+from typing_extensions import Literal
 
 if sys.version_info > (3,):
     from pathlib import Path  # pylint: disable=import-error
@@ -482,10 +483,10 @@ class frozentags(frozendict, Mapping[str, str]):
         return frozentags(updated)
 
 
-GeneratedContext = TypeVar("GeneratedContext")
+T_GeneratedContext = TypeVar("T_GeneratedContext")
 
 
-class EventGenerationManager(Generic[GeneratedContext]):
+class EventGenerationManager(Generic[T_GeneratedContext]):
     """Utility class that wraps an event generator function, that also yields a single instance of
     a typed object.  All events yielded before the typed object are yielded through the method
     `generate_setup_events` and all events yielded after the typed object are yielded through the
@@ -501,14 +502,14 @@ class EventGenerationManager(Generic[GeneratedContext]):
 
     def __init__(
         self,
-        generator: Generator[Union["DagsterEvent", GeneratedContext], None, None],
-        object_cls: Type[GeneratedContext],
+        generator: Generator[Union["DagsterEvent", T_GeneratedContext], None, None],
+        object_cls: Type[T_GeneratedContext],
         require_object: Optional[bool] = True,
     ):
         self.generator = check.generator(generator)
-        self.object_cls: Type[GeneratedContext] = check.class_param(object_cls, "object_cls")
+        self.object_cls: Type[T_GeneratedContext] = check.class_param(object_cls, "object_cls")
         self.require_object = check.bool_param(require_object, "require_object")
-        self.object: Optional[GeneratedContext] = None
+        self.object: Optional[T_GeneratedContext] = None
         self.did_setup = False
         self.did_teardown = False
 
@@ -530,10 +531,10 @@ class EventGenerationManager(Generic[GeneratedContext]):
                     "generator never yielded object of type {}".format(self.object_cls.__name__),
                 )
 
-    def get_object(self) -> GeneratedContext:
+    def get_object(self) -> T_GeneratedContext:
         if not self.did_setup:
             check.failed("Called `get_object` before `generate_setup_events`")
-        return cast(GeneratedContext, self.object)
+        return cast(T_GeneratedContext, self.object)
 
     def generate_teardown_events(self) -> Iterator["DagsterEvent"]:
         self.did_teardown = True
@@ -690,3 +691,15 @@ def get_run_crash_explanation(prefix: str, exit_code: int):
         exit_clause = f"unexpectedly exited with code {exit_code}."
 
     return prefix + " " + exit_clause
+
+
+def len_iter(iterable: Iterable[object]) -> int:
+    if isinstance(iterable, Sized):
+        return len(iterable)
+    return sum(1 for _ in iterable)
+
+
+def iter_to_list(iterable: Iterable[T]) -> List[T]:
+    if isinstance(iterable, List):
+        return iterable
+    return list(iterable)

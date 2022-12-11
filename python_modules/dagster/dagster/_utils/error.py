@@ -2,6 +2,7 @@ import traceback
 from types import TracebackType
 from typing import Any, NamedTuple, Optional, Sequence, Tuple, Type, Union
 
+import dagster._check as check
 from dagster._serdes import whitelist_for_serdes
 
 
@@ -13,7 +14,7 @@ class SerializableErrorInfo(
         [
             ("message", str),
             ("stack", Sequence[str]),
-            ("cls_name", str),
+            ("cls_name", Optional[str]),
             ("cause", Any),
             ("context", Any),
         ],
@@ -27,7 +28,7 @@ class SerializableErrorInfo(
         cls,
         message: str,
         stack: Sequence[str],
-        cls_name: str,
+        cls_name: Optional[str],
         cause: Optional["SerializableErrorInfo"] = None,
         context: Optional["SerializableErrorInfo"] = None,
     ):
@@ -82,7 +83,13 @@ def serializable_error_info_from_exc_info(
     # Whether to forward serialized errors thrown from subprocesses
     hoist_user_code_error: Optional[bool] = True,
 ) -> SerializableErrorInfo:
-    _exc_type, e, _tb = exc_info
+    # `sys.exc_info() return Tuple[None, None, None] when there is no exception being processed. We accept this in
+    # the type signature here since this function is meant to directly receive the return value of
+    # `sys.exc_info`, but the function should never be called when there is no exception to process.
+    exc_type, e, tb = exc_info
+    exc_type = check.not_none(exc_type)
+    e = check.not_none(e)
+    tb = check.not_none(tb)
     from dagster._core.errors import DagsterUserCodeProcessError
 
     if (
@@ -92,4 +99,5 @@ def serializable_error_info_from_exc_info(
     ):
         return e.user_code_process_error_infos[0]
     else:
-        return _serializable_error_info_from_tb(traceback.TracebackException(*exc_info))
+        tb_exc = traceback.TracebackException(exc_type, e, tb)
+        return _serializable_error_info_from_tb(tb_exc)

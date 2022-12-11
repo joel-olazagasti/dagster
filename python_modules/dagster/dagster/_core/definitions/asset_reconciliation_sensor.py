@@ -427,7 +427,7 @@ def get_expected_data_times_for_key(
     """Returns the data times for the given asset key if this asset were to be executed in this
     tick.
     """
-    expected_data_times: Dict[AssetKey, datetime.datetime] = {asset_key: current_time}
+    expected_data_times: Dict[AssetKey, Optional[datetime.datetime]] = {asset_key: current_time}
 
     def _min_or_none(a, b):
         if a is None or b is None:
@@ -565,6 +565,9 @@ def determine_asset_partitions_to_reconcile_for_freshness(
             # figure out the current contents of this asset with respect to its constraints
             current_data_times = get_current_data_times_for_key(
                 instance_queryer, asset_graph, relevant_upstream_keys, key
+            )
+            expected_data_times = get_expected_data_times_for_key(
+                asset_graph, current_time, expected_data_times_by_key, key
             )
 
             # should not execute if key is not targeted or previous run failed
