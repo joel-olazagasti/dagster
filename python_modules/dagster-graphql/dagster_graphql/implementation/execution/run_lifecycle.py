@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Optional, Sequence, Tuple, cast
 
+
 import dagster._check as check
 from dagster._core.errors import DagsterRunNotFoundError
 from dagster._core.execution.plan.resume_retry import get_retry_steps_from_parent_run
@@ -10,13 +11,12 @@ from dagster._core.storage.pipeline_run import DagsterRun, DagsterRunStatus
 from dagster._core.storage.tags import RESUME_RETRY_TAG
 from dagster._core.utils import make_new_run_id
 from dagster._utils.merger import merge_dicts
-from graphene import ResolveInfo
 
 from ..external import ensure_valid_config, get_external_execution_plan_or_raise
 from ..utils import ExecutionParams, UserFacingGraphQLError
 
 if TYPE_CHECKING:
-    from dagster_graphql.schema.util import HasContext
+    from dagster_graphql.schema.util import ResolveInfo
 
 
 def _get_run(instance: DagsterInstance, run_id: str) -> DagsterRun:
@@ -27,8 +27,9 @@ def _get_run(instance: DagsterInstance, run_id: str) -> DagsterRun:
 
 
 def compute_step_keys_to_execute(
-    graphene_info: "HasContext", execution_params: ExecutionParams
+    graphene_info: "ResolveInfo", execution_params: ExecutionParams
 ) -> Tuple[Optional[Sequence[str]], Optional[KnownExecutionState]]:
+    from dagster_graphql.schema.util import ResolveInfo
     check.inst_param(graphene_info, "graphene_info", ResolveInfo)
     check.inst_param(execution_params, "execution_params", ExecutionParams)
 
@@ -60,7 +61,7 @@ def is_resume_retry(execution_params):
 
 
 def create_valid_pipeline_run(
-    graphene_info: "HasContext",
+    graphene_info: "ResolveInfo",
     external_pipeline: ExternalPipeline,
     execution_params: ExecutionParams,
 ):

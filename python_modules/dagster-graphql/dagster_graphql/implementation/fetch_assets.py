@@ -2,6 +2,11 @@ import datetime
 from collections import defaultdict
 from typing import TYPE_CHECKING, AbstractSet, Dict, Iterator, List, Mapping, Optional, Sequence, Tuple
 
+from dagster_graphql.implementation.loader import (
+    CrossRepoAssetDependedByLoader,
+    ProjectedLogicalVersionLoader,
+)
+
 import dagster._seven as seven
 from dagster import (
     AssetKey,
@@ -26,15 +31,12 @@ from dagster_graphql.implementation.loader import (
     ProjectedLogicalVersionLoader,
 )
 
-if TYPE_CHECKING:
-    pass
-
 from .utils import capture_error
 
 if TYPE_CHECKING:
     from ..schema.asset_graph import GrapheneAssetNode
     from ..schema.freshness_policy import GrapheneAssetFreshnessInfo
-    from ..schema.util import HasContext
+    from ..schema.util import ResolveInfo
 
 
 def _normalize_asset_cursor_str(cursor_string):
@@ -93,13 +95,7 @@ def asset_node_iter(
                 yield location, repository, external_asset_node
 
 
-<<<<<<< HEAD
-def get_asset_node_definition_collisions(
-    graphene_info: "HasContext", asset_keys: Sequence[AssetKey]
-):
-=======
-def get_asset_node_definition_collisions(graphene_info: HasContext, asset_keys: AbstractSet[AssetKey]):
->>>>>>> 5a002e2fc7 ([dagster-graphql] AssetKey cleanup)
+def get_asset_node_definition_collisions(graphene_info: ResolveInfo, asset_keys: AbstractSet[AssetKey]):
     from ..schema.asset_graph import GrapheneAssetNodeDefinitionCollision
     from ..schema.external import GrapheneRepository
 
