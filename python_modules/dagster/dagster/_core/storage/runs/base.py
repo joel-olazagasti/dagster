@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Iterable, Mapping, Optional, Sequence, Set, Tuple, Union
+from typing_extensions import TypedDict
 
 from dagster._core.events import DagsterEvent
 from dagster._core.execution.backfill import BulkActionStatus, PartitionBackfill
@@ -17,6 +18,10 @@ from dagster._daemon.types import DaemonHeartbeat
 
 if TYPE_CHECKING:
     from dagster._core.host_representation.origin import ExternalPipelineOrigin
+
+class RunGroupInfo(TypedDict):
+    count: int
+    runs: Iterable[DagsterRun]
 
 class RunStorage(ABC, MayHaveInstanceWeakref):
     """Abstract base class for storing pipeline run history.
@@ -106,7 +111,7 @@ class RunStorage(ABC, MayHaveInstanceWeakref):
         filters: Optional[RunsFilter] = None,
         cursor: Optional[str] = None,
         limit: Optional[int] = None,
-    ) -> Mapping[str, Mapping[str, Union[Iterable[DagsterRun], int]]]:
+    ) -> Mapping[str, RunGroupInfo]:
         """Return all of the run groups present in the storage that include rows matching the
         given filter.
 
