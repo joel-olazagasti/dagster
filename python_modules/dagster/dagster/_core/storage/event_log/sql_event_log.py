@@ -2,12 +2,17 @@ import logging
 from abc import abstractmethod
 from collections import OrderedDict, defaultdict
 from datetime import datetime
+<<<<<<< HEAD
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Sequence, Set, Union, cast
 from typing_extensions import TypeAlias
+=======
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Set, Union, cast
+>>>>>>> 731f73decf (formatting [INTERNAL_BRANCH=sean/pyright])
 
 import pendulum
 import sqlalchemy as db
 import sqlalchemy.exc as db_exc
+from typing_extensions import TypeAlias
 
 import dagster._check as check
 import dagster._seven as seven
@@ -58,6 +63,7 @@ MIN_ASSET_ROWS = 25
 # whole can be dropped.
 SqlDbConnection: TypeAlias = Any
 
+
 class SqlEventLogStorage(EventLogStorage):
     """Base class for SQL backed event log storages.
 
@@ -76,8 +82,7 @@ class SqlEventLogStorage(EventLogStorage):
 
     @abstractmethod
     def index_connection(self) -> SqlDbConnection:
-        """Context manager yielding a connection to access cross-run indexed tables.
-        """
+        """Context manager yielding a connection to access cross-run indexed tables."""
 
     @abstractmethod
     def upgrade(self) -> None:
@@ -975,7 +980,9 @@ class SqlEventLogStorage(EventLogStorage):
             result = conn.execute(db.select([db.func.max(SqlEventLogStorageTable.c.id)])).fetchone()
             return result[0]
 
-    def _construct_asset_record_from_row(self, row, last_materialization: Optional[EventLogEntry]) -> AssetRecord:
+    def _construct_asset_record_from_row(
+        self, row, last_materialization: Optional[EventLogEntry]
+    ) -> AssetRecord:
         from dagster._core.storage.partition_status_cache import AssetStatusCacheValue
         asset_key = AssetKey.from_db_string(row[1])
         if asset_key:

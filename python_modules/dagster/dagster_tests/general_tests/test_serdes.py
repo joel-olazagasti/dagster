@@ -274,7 +274,7 @@ def test_missing_one_parameter():
             def __new__(cls, field_one, field_two):
                 return super(MissingFieldInNew, cls).__new__(
                     field_one, field_two, None
-                )  # type: ignore
+                )  # type: ignore (test error)
 
     assert (
         str(exc_info.value)

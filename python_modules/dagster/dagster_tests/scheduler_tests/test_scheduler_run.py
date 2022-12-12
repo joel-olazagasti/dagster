@@ -4,9 +4,8 @@ import string
 import time
 from contextlib import ExitStack, contextmanager
 
-import pytest
-
 import dagster._seven.compat.pendulum as pendulum
+import pytest
 from dagster import (
     Any,
     AssetKey,

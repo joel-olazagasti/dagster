@@ -110,7 +110,9 @@ class GrapheneRegularConfigType(graphene.ObjectType):
         )
         super().__init__(**_ctor_kwargs_for_snap(config_type_snap))
 
-    def resolve_recursive_config_types(self, _graphene_info: ResolveInfo) -> List[GrapheneConfigTypeUnion]:
+    def resolve_recursive_config_types(
+        self, _graphene_info: ResolveInfo
+    ) -> List[GrapheneConfigTypeUnion]:
         return list(
             map(
                 lambda key: to_config_type(self._config_schema_snapshot, key),
@@ -142,7 +144,9 @@ class GrapheneMapConfigType(graphene.ObjectType):
         )
         super().__init__(**_ctor_kwargs_for_snap(config_type_snap))
 
-    def resolve_recursive_config_types(self, _graphene_info: ResolveInfo) -> List[GrapheneConfigTypeUnion]:
+    def resolve_recursive_config_types(
+        self, _graphene_info: ResolveInfo
+    ) -> List[GrapheneConfigTypeUnion]:
         return list(
             map(
                 lambda key: to_config_type(self._config_schema_snapshot, key),
@@ -189,7 +193,9 @@ class GrapheneArrayConfigType(graphene.ObjectType):
         )
         super().__init__(**_ctor_kwargs_for_snap(config_type_snap))
 
-    def resolve_recursive_config_types(self, _graphene_info: ResolveInfo) -> List[GrapheneConfigTypeUnion]:
+    def resolve_recursive_config_types(
+        self, _graphene_info: ResolveInfo
+    ) -> List[GrapheneConfigTypeUnion]:
         return list(
             map(
                 lambda key: to_config_type(self._config_schema_snapshot, key),
@@ -225,7 +231,9 @@ class GrapheneScalarUnionConfigType(graphene.ObjectType):
         )
         super().__init__(**_ctor_kwargs_for_snap(config_type_snap))
 
-    def resolve_recursive_config_types(self, _graphene_info: ResolveInfo) -> List[GrapheneConfigTypeUnion]:
+    def resolve_recursive_config_types(
+        self, _graphene_info: ResolveInfo
+    ) -> List[GrapheneConfigTypeUnion]:
         return list(
             map(
                 lambda key: to_config_type(self._config_schema_snapshot, key),
@@ -268,7 +276,9 @@ class GrapheneNullableConfigType(graphene.ObjectType):
         )
         super().__init__(**_ctor_kwargs_for_snap(config_type_snap))
 
-    def resolve_recursive_config_types(self, _graphene_info: ResolveInfo) -> List[GrapheneConfigTypeUnion]:
+    def resolve_recursive_config_types(
+        self, _graphene_info: ResolveInfo
+    ) -> List[GrapheneConfigTypeUnion]:
         return list(
             map(
                 lambda key: to_config_type(self._config_schema_snapshot, key),
@@ -307,7 +317,9 @@ class GrapheneEnumConfigType(graphene.ObjectType):
         )
         super().__init__(**_ctor_kwargs_for_snap(config_type_snap))
 
-    def resolve_recursive_config_types(self, _graphene_info: ResolveInfo) -> List[GrapheneConfigTypeUnion]:
+    def resolve_recursive_config_types(
+        self, _graphene_info: ResolveInfo
+    ) -> List[GrapheneConfigTypeUnion]:
         return list(
             map(
                 lambda key: to_config_type(self._config_schema_snapshot, key),
@@ -377,7 +389,9 @@ class GrapheneCompositeConfigType(graphene.ObjectType):
         )
         super().__init__(**_ctor_kwargs_for_snap(config_type_snap))
 
-    def resolve_recursive_config_types(self, _graphene_info: ResolveInfo) -> List[GrapheneConfigTypeUnion]:
+    def resolve_recursive_config_types(
+        self, _graphene_info: ResolveInfo
+    ) -> List[GrapheneConfigTypeUnion]:
         return list(
             map(
                 lambda key: to_config_type(self._config_schema_snapshot, key),

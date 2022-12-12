@@ -213,7 +213,7 @@ class SqliteEventLogStorage(SqlEventLogStorage, ConfigurableClass):
                 conn.close()
             engine.dispose()
 
-    def run_connection(self, run_id: Optional[str]=None) -> Any:
+    def run_connection(self, run_id: Optional[str] = None) -> Any:
         return self._connect(run_id)
 
     def index_connection(self):

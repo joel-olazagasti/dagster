@@ -23,17 +23,15 @@ from typing import (
     cast,
 )
 
-from dagster_graphql.schema.errors import GrapheneError
-from dagster_graphql.schema.util import ResolveInfo
-from typing_extensions import ParamSpec, TypeAlias
-
 import dagster._check as check
 from dagster._core.definitions.events import AssetKey
 from dagster._core.host_representation import GraphSelector, PipelineSelector
 from dagster._core.workspace.context import BaseWorkspaceRequestContext
 from dagster._utils.error import serializable_error_info_from_exc_info
-from graphene import ResolveInfo
 from typing_extensions import ParamSpec, TypeAlias
+
+from dagster_graphql.schema.errors import GrapheneError
+from dagster_graphql.schema.util import ResolveInfo
 
 if TYPE_CHECKING:
     from dagster_graphql.schema.errors import GraphenePythonError
@@ -138,7 +136,6 @@ def capture_error(fn: Callable[P, T]) -> Callable[P, Union[T, GrapheneError, Gra
 
 
 class UserFacingGraphQLError(Exception):
-
     # The `error` arg here should be a Graphene type implementing the interface `GrapheneError`, but
     # this is not trackable by the Python type system.
     def __init__(self, error: Any):

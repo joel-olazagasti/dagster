@@ -3,6 +3,7 @@ import pytest
 from unittest.mock import MagicMock
 
 import dagster._seven.compat.pendulum as pendulum
+import pytest
 from dagster import (
     AssetIn,
     AssetKey,

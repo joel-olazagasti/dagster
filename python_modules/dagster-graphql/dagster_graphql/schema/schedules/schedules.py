@@ -1,8 +1,5 @@
 from typing import List, Optional
 
-import graphene
-from dagster_graphql.implementation.loader import RepositoryScopedBatchLoader
-
 import dagster._check as check
 import graphene
 from dagster._core.host_representation import ExternalSchedule

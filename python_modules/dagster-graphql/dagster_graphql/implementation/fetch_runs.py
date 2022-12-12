@@ -1,11 +1,6 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING, Dict, KeysView, List, Mapping, Optional, Sequence, Union, cast
 
-from dagster_graphql.schema.errors import GrapheneRunGroupNotFoundError, GrapheneRunNotFoundError
-from dagster_graphql.schema.pipelines.config import GraphenePipelineConfigValidationValid
-from dagster_graphql.schema.tags import GraphenePipelineTagAndValues
-from dagster_graphql.schema.util import ResolveInfo
-
 from dagster import (
     AssetKey,
     _check as check,
@@ -19,15 +14,19 @@ from dagster._core.host_representation import PipelineSelector
 from dagster._core.storage.pipeline_run import RunRecord, RunsFilter
 from dagster._core.storage.tags import TagType, get_tag_type
 from dagster._legacy import DagsterRunStatus, PipelineDefinition
-from graphene import ResolveInfo
+
+from dagster_graphql.schema.errors import GrapheneRunGroupNotFoundError, GrapheneRunNotFoundError
+from dagster_graphql.schema.pipelines.config import GraphenePipelineConfigValidationValid
+from dagster_graphql.schema.tags import GraphenePipelineTagAndValues
+from dagster_graphql.schema.util import ResolveInfo
 
 from .external import ensure_valid_config, get_external_pipeline_or_raise
 from .utils import UserFacingGraphQLError, capture_error
 
 if TYPE_CHECKING:
+    from dagster_graphql.schema.pipelines.pipeline import GrapheneEventConnection, GrapheneRun
     from dagster_graphql.schema.pipelines.pipeline_run_stats import GrapheneRunStatsSnapshot
     from dagster_graphql.schema.runs import GrapheneRunGroup
-    from dagster_graphql.schema.pipelines.pipeline import GrapheneEventConnection, GrapheneRun
 
     from ..schema.asset_graph import GrapheneAssetNode
 

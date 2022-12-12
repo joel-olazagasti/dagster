@@ -1,7 +1,5 @@
 from typing import Optional
 
-import graphene
-
 import dagster._check as check
 import graphene
 from dagster._core.host_representation import ExternalPartitionSet, RepositoryHandle

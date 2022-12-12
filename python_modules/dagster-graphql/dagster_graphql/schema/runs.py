@@ -147,7 +147,9 @@ class GrapheneRunConfigData(GenericScalar, graphene.Scalar):
         name = "RunConfigData"
 
 
-def parse_run_config_input(run_config: Union[str, Mapping[str, object]], raise_on_error: bool) -> Union[str, Mapping[str, object]]:
+def parse_run_config_input(
+    run_config: Union[str, Mapping[str, object]], raise_on_error: bool
+) -> Union[str, Mapping[str, object]]:
     if isinstance(run_config, str):
         try:
             return load_run_config_yaml(run_config)

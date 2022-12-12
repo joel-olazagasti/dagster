@@ -9,7 +9,6 @@ from typing import Any, Dict, Mapping, Optional, Sequence, cast
 
 import requests
 import requests.utils
-
 from dagster import (
     Failure,
     Field,

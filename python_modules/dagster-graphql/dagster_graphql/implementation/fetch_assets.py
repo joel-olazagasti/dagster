@@ -1,10 +1,15 @@
 import datetime
 from collections import defaultdict
-from typing import TYPE_CHECKING, AbstractSet, Dict, Iterator, List, Mapping, Optional, Sequence, Tuple
-
-from dagster_graphql.implementation.loader import (
-    CrossRepoAssetDependedByLoader,
-    ProjectedLogicalVersionLoader,
+from typing import (
+    TYPE_CHECKING,
+    AbstractSet,
+    Dict,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
 )
 
 import dagster._seven as seven
@@ -95,7 +100,9 @@ def asset_node_iter(
                 yield location, repository, external_asset_node
 
 
-def get_asset_node_definition_collisions(graphene_info: ResolveInfo, asset_keys: AbstractSet[AssetKey]):
+def get_asset_node_definition_collisions(
+    graphene_info: ResolveInfo, asset_keys: AbstractSet[AssetKey]
+):
     from ..schema.asset_graph import GrapheneAssetNodeDefinitionCollision
     from ..schema.external import GrapheneRepository
 

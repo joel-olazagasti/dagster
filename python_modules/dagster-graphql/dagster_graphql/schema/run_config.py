@@ -1,5 +1,4 @@
 from typing import Optional
-import graphene
 
 import dagster._check as check
 import graphene
@@ -35,7 +34,7 @@ class GrapheneRunConfigSchema(graphene.ObjectType):
 
     isRunConfigValid = graphene.Field(
         graphene.NonNull(GraphenePipelineConfigValidationResult),
-        runConfigData = graphene.Argument(GrapheneRunConfigData),
+        runConfigData=graphene.Argument(GrapheneRunConfigData),
         description="""Parse a particular run config result. The return value
         either indicates that the validation succeeded by returning
         `PipelineConfigValidationValid` or that there are configuration errors
@@ -77,7 +76,9 @@ class GrapheneRunConfigSchema(graphene.ObjectType):
             self._represented_pipeline.get_mode_def_snap(self._mode).root_config_key,
         )
 
-    def resolve_isRunConfigValid(self, graphene_info: ResolveInfo, runConfigData: Optional[InputObject] = None):
+    def resolve_isRunConfigValid(
+        self, graphene_info: ResolveInfo, runConfigData: Optional[InputObject] = None
+    ):
         return resolve_is_run_config_valid(
             graphene_info,
             self._represented_pipeline,

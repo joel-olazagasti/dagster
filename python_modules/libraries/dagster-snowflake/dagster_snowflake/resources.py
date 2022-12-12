@@ -6,10 +6,9 @@ from typing import Any, Iterator, Mapping, Optional, Sequence, Union
 import dagster._check as check
 from dagster import resource
 from dagster._annotations import public
+from dagster._core.storage.event_log.sql_event_log import SqlDbConnection
 
 from .configs import define_snowflake_config
-
-from dagster._core.storage.event_log.sql_event_log import SqlDbConnection
 
 try:
     import snowflake.connector
@@ -84,7 +83,9 @@ class SnowflakeConnection:
 
     @public
     @contextmanager
-    def get_connection(self, raw_conn: bool = True) -> Iterator[Union[SqlDbConnection, snowflake.connector.SnowflakeConnection]]:
+    def get_connection(
+        self, raw_conn: bool = True
+    ) -> Iterator[Union[SqlDbConnection, snowflake.connector.SnowflakeConnection]]:
         """Gets a connection to Snowflake as a context manager.
 
         If using the execute_query, execute_queries, or load_table_from_local_parquet methods,

@@ -1,12 +1,12 @@
 from typing import Mapping, Union, cast
+
+import pandas as pd
+import pandas.core.dtypes.common as pd_core_dtypes_common
 from dagster._core.definitions.metadata import MetadataValue, RawMetadataValue
 from dagster._core.definitions.metadata.table import TableColumn, TableSchema
 from dagster._core.execution.context.input import InputContext
 from dagster._core.execution.context.output import OutputContext
 from dagster._core.storage.db_io_manager import DbTypeHandler, TableSlice
-
-import pandas as pd
-import pandas.core.dtypes.common as pd_core_dtypes_common
 from dagster_snowflake import build_snowflake_io_manager
 from dagster_snowflake.resources import SnowflakeConnection
 from dagster_snowflake.snowflake_io_manager import SnowflakeDbClient

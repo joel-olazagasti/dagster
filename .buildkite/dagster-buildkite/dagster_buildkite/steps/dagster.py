@@ -73,6 +73,7 @@ def build_repo_wide_ruff_steps() -> List[CommandStep]:
         .build(),
     ]
 
+
 def build_repo_wide_pyright_steps() -> List[CommandStep]:
     return [
         CommandStepBuilder(":pyright: pyright")
@@ -81,7 +82,6 @@ def build_repo_wide_pyright_steps() -> List[CommandStep]:
         .with_skip(skip_if_no_python_changes())
         .build(),
     ]
-
 
 
 def build_repo_wide_check_manifest_steps() -> List[CommandStep]:

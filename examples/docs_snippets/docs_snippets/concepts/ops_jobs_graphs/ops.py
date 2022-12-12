@@ -52,8 +52,10 @@ def my_input_op(abc, xyz):
 
 # start_typed_input_op_marker
 
+
 def is_even(_, value: object) -> bool:
     return isinstance(value, int) and value % 2 == 0
+
 
 MyDagsterType = DagsterType(type_check_fn=is_even, name="MyDagsterType")
 

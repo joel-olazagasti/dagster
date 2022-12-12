@@ -1,6 +1,6 @@
 import datetime
 from contextlib import contextmanager
-from typing import Any, Iterator, Optional, Union, cast
+from typing import Iterator, Optional, Union, cast
 
 import packaging.version
 import pendulum
@@ -83,11 +83,13 @@ class IPendulumDateTime(Protocol):
     def int_timestamp(self) -> int:
         ...
 
+
 # Type-ignored because Pyright complains that this class doesn't implement all members of the
 # `IPendulumDateTime` protocol. However, we only ever cast real pendulum datetime objects as
 # this class, so this doesn't need to implement anything.
 class PendulumDateTime(datetime.datetime, IPendulumDateTime):  # type: ignore
     pass
+
 
 @runtime_checkable
 class IPendulumTimeZone(Protocol):
@@ -95,9 +97,11 @@ class IPendulumTimeZone(Protocol):
     def name(self) -> str:
         ...
 
+
 # See `PendulumDateTime` for reason of type-ignore.
 class PendulumTimeZone(datetime.tzinfo, IPendulumTimeZone):  # type: ignore
     pass
+
 
 # type-ignore because pendulum.UTC is defined under both pendulum 1 and 2, but it's not properly public.
 UTC = cast(PendulumTimeZone, pendulum.UTC)  # type: ignore
@@ -142,6 +146,7 @@ def to_timezone(dt: datetime.datetime, tz: str) -> PendulumDateTime:
 def timezone(tz: str) -> PendulumTimeZone:
     return cast(PendulumTimeZone, pendulum.tz.timezone(tz))
 
+
 @contextmanager
 def test(dt: PendulumDateTime) -> Iterator[None]:
     # Everything type-ignored here because one of these branches will fail type-checking depending
@@ -152,6 +157,7 @@ def test(dt: PendulumDateTime) -> Iterator[None]:
         from pendulum import test as ptest  # type: ignore
     with ptest(dt):  # type: ignore
         yield
+
 
 @contextmanager
 def mock_pendulum_timezone(override_timezone: str) -> Iterator[None]:

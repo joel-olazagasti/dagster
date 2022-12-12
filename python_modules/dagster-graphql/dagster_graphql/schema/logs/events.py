@@ -1,8 +1,7 @@
 from typing import TYPE_CHECKING, Optional, Union
 
-import graphene
-
 import dagster._check as check
+import graphene
 from dagster._core.definitions.events import AssetLineageInfo
 from dagster._core.events import DagsterEventType
 from dagster._core.execution.plan.objects import ErrorSource
@@ -20,6 +19,7 @@ from .log_level import GrapheneLogLevel
 
 if TYPE_CHECKING:
     from dagster_graphql.schema.pipelines.pipeline import GrapheneRun
+
 
 class GrapheneMessageEvent(graphene.Interface):
     runId = graphene.NonNull(graphene.String)
@@ -211,7 +211,7 @@ class GrapheneExpectationResult(graphene.ObjectType):
     def resolve_metadataEntries(self, _graphene_info: ResolveInfo):
         from ...implementation.events import _to_metadata_entries
 
-        return _to_metadata_entries(self.metadata_entries) 
+        return _to_metadata_entries(self.metadata_entries)
 
 
 class GrapheneTypeCheck(graphene.ObjectType):

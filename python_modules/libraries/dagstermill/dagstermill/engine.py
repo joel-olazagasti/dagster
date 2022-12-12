@@ -76,7 +76,9 @@ if is_papermill_2():
 
 else:
     from papermill.engines import NBConvertEngine  # type: ignore (papermill 1 compat)
-    from papermill.preprocess import PapermillExecutePreprocessor  # type: ignore (papermill 1 compat)
+    from papermill.preprocess import (  # type: ignore (papermill 1 compat)
+        PapermillExecutePreprocessor,
+    )
 
     class DagstermillExecutePreprocessor(PapermillExecutePreprocessor):
         # We need to finalize dagster resources here (as opposed to, e.g., in the notebook_complete

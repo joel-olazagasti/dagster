@@ -181,9 +181,7 @@ class Manager:
             self.context = DagstermillRuntimeExecutionContext(
                 pipeline_context=pipeline_context,
                 pipeline_def=pipeline_def,
-                solid_config=run_config.get("ops", {})
-                .get(solid.name, {})
-                .get("config"),
+                solid_config=run_config.get("ops", {}).get(solid.name, {}).get("config"),
                 resource_keys_to_init=get_required_resource_keys_to_init(
                     execution_plan,
                     pipeline_def,
@@ -191,9 +189,12 @@ class Manager:
                 ),
                 solid_name=solid.name,
                 solid_handle=solid_handle,
-                step_context=cast(StepExecutionContext, pipeline_context.for_step(
-                    cast(ExecutionStep, execution_plan.get_step_by_key(step_key))
-                )),
+                step_context=cast(
+                    StepExecutionContext,
+                    pipeline_context.for_step(
+                        cast(ExecutionStep, execution_plan.get_step_by_key(step_key))
+                    ),
+                ),
             )
 
         return self.context

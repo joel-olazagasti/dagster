@@ -9,8 +9,6 @@ from airflow.operators.bash_operator import BashOperator  # type: ignore (airflo
 from airflow.operators.http_operator import SimpleHttpOperator  # type: ignore (airflow 1 compat)
 from airflow.operators.python_operator import PythonOperator  # type: ignore (airflow 1 compat)
 from airflow.operators.sqlite_operator import SqliteOperator  # type: ignore (airflow 1 compat)
-from dagster_airflow import airflow_operator_to_op
-
 from dagster import job, op
 from dagster._core.test_utils import instance_for_test
 from dagster_airflow import airflow_operator_to_op

@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from multiprocessing import Queue
 from multiprocessing.context import BaseContext as MultiprocessingBaseContext
 from typing import TYPE_CHECKING, Iterator, NamedTuple, Union
+
 from typing_extensions import Literal
 
 import dagster._check as check
@@ -98,7 +99,9 @@ PROCESS_DEAD_AND_QUEUE_EMPTY = "PROCESS_DEAD_AND_QUEUE_EMPTY"
 """Sentinel value."""
 
 
-def _poll_for_event(process, event_queue) -> Union[DagsterEvent, Literal['PROCESS_DEAD_AND_QUEUE_EMPTY']]:
+def _poll_for_event(
+    process, event_queue
+) -> Union[DagsterEvent, Literal["PROCESS_DEAD_AND_QUEUE_EMPTY"]]:
     try:
         return event_queue.get(block=True, timeout=TICK)
     except queue.Empty:

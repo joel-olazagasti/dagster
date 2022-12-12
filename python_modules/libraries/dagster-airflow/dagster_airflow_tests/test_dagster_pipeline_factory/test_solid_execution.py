@@ -5,13 +5,16 @@ from unittest import mock
 # We ignore type errors in several places because we are importing in such a way as to be
 # compatible with both versions 1.x and 2.x of airflow. This means importing from places that are
 # not the blessed API of the latest version, which raises pyright "not exported" errors.
-
 from airflow import __version__ as airflow_version
 
 if airflow_version >= "2.0.0":
-    from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator  # type: ignore (airflow 1 compat)
+    from airflow.providers.apache.spark.operators.spark_submit import (  # type: ignore (airflow 1 compat)
+        SparkSubmitOperator,  # type: ignore (airflow 1 compat)
+    )
 else:
-    from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator  # type: ignore (airflow 1 compat)
+    from airflow.contrib.operators.spark_submit_operator import (  # type: ignore (airflow 2 compat)
+        SparkSubmitOperator,  # type: ignore (airflow 1 compat)
+    )
 
 from airflow.models.dag import DAG  # type: ignore (airflow 1 compat)
 from airflow.operators.bash_operator import BashOperator  # type: ignore (airflow 1 compat)

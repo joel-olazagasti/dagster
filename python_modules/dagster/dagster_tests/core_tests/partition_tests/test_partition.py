@@ -1,9 +1,8 @@
 from datetime import datetime, time
 from typing import Callable, Optional, Sequence
 
-import pytest
-
 import dagster._seven.compat.pendulum as pendulum
+import pytest
 from dagster import (
     DagsterInvalidDefinitionError,
     DagsterInvalidInvocationError,

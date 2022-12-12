@@ -1,4 +1,5 @@
 import warnings
+from inspect import Parameter
 from typing import (
     AbstractSet,
     Any,
@@ -22,7 +23,6 @@ from dagster._core.definitions.resource_output import get_resource_args
 from dagster._core.errors import DagsterInvalidDefinitionError
 from dagster._core.storage.io_manager import IOManagerDefinition
 from dagster._core.types.dagster_type import DagsterType
-from inspect import Parameter
 from dagster._utils.backcompat import (
     ExperimentalWarning,
     deprecation_warning,

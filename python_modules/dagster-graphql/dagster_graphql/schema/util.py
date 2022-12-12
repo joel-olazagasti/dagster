@@ -1,13 +1,9 @@
-from typing import cast
-
-import graphene
-from typing_extensions import TypeAlias
 from typing import Any, cast
 
-
+import graphene
 from dagster._core.storage.captured_log_manager import CapturedLogManager
 from dagster._core.workspace.context import WorkspaceRequestContext
-from typing_extensions import Protocol
+from typing_extensions import TypeAlias
 
 # Unfortunately Graphene input objects do not play nicely with typing-- we can't type arguments to
 # resolvers with `GrapheneMyInputObjectType` and have it work. We use this `InputObject` type as a

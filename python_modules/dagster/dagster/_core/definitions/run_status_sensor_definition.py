@@ -13,10 +13,12 @@ from typing import (
     overload,
 )
 
+from typing_extensions import TypeAlias
+
 import dagster._check as check
+import dagster._seven.compat.pendulum as pendulum
 from dagster._annotations import public
 from dagster._core.definitions.instigation_logger import InstigationLogger
-import dagster._seven.compat.pendulum as pendulum
 from dagster._core.errors import (
     DagsterInvalidDefinitionError,
     DagsterInvalidInvocationError,
@@ -37,7 +39,6 @@ from dagster._seven import JSONDecodeError
 from dagster._utils import utc_datetime_from_timestamp
 from dagster._utils.backcompat import deprecation_warning
 from dagster._utils.error import serializable_error_info_from_exc_info
-from typing_extensions import TypeAlias
 
 from ..decorator_utils import get_function_params
 from .graph_definition import GraphDefinition
@@ -234,11 +235,13 @@ def build_run_status_sensor_context(
         context=context,
     )
 
+
 @overload
 def run_failure_sensor(
     name: RunFailureSensorEvaluationFn,
 ) -> SensorDefinition:
     ...
+
 
 @overload
 def run_failure_sensor(
@@ -273,11 +276,9 @@ def run_failure_sensor(
     default_status: DefaultSensorStatus = DefaultSensorStatus.STOPPED,
     request_job: Optional[Union[GraphDefinition, JobDefinition]] = None,
     request_jobs: Optional[Sequence[Union[GraphDefinition, JobDefinition]]] = None,
-) -> Callable[
-    [RunFailureSensorEvaluationFn],
-    SensorDefinition,
-]:
+) -> Callable[[RunFailureSensorEvaluationFn], SensorDefinition,]:
     ...
+
 
 def run_failure_sensor(
     name: Optional[Union[RunFailureSensorEvaluationFn, str]] = None,
@@ -311,10 +312,7 @@ def run_failure_sensor(
     default_status: DefaultSensorStatus = DefaultSensorStatus.STOPPED,
     request_job: Optional[Union[GraphDefinition, JobDefinition]] = None,
     request_jobs: Optional[Sequence[Union[GraphDefinition, JobDefinition]]] = None,
-) -> Union[SensorDefinition, Callable[
-    [RunFailureSensorEvaluationFn],
-    SensorDefinition,
-]]:
+) -> Union[SensorDefinition, Callable[[RunFailureSensorEvaluationFn], SensorDefinition,]]:
     """
     Creates a sensor that reacts to job failure events, where the decorated function will be
     run when a run fails.
@@ -493,7 +491,9 @@ class RunStatusSensorDefinition(SensorDefinition):
             else []
         )
 
-        def _wrapped_fn(context: SensorEvaluationContext) -> Iterator[Union[RunRequest, SkipReason, PipelineRunReaction]]:
+        def _wrapped_fn(
+            context: SensorEvaluationContext,
+        ) -> Iterator[Union[RunRequest, SkipReason, PipelineRunReaction]]:
             # initiate the cursor to (most recent event id, current timestamp) when:
             # * it's the first time starting the sensor
             # * or, the cursor isn't in valid format (backcompt)
@@ -627,15 +627,16 @@ class RunStatusSensorDefinition(SensorDefinition):
                         # one user code invocation maps to one failure event
                         sensor_return = (
                             run_status_sensor_fn(
-                            RunStatusSensorContext(
-                                sensor_name=name,
-                                dagster_run=pipeline_run,
-                                dagster_event=event_log_entry.dagster_event,
-                                instance=context.instance,
-                                context=context,
+                                RunStatusSensorContext(
+                                    sensor_name=name,
+                                    dagster_run=pipeline_run,
+                                    dagster_event=event_log_entry.dagster_event,
+                                    instance=context.instance,
+                                    context=context,
+                                )
                             )
-                        ) if is_context_provided(run_status_sensor_fn)
-                        else run_status_sensor_fn()  # type: ignore (strict typeguard)
+                            if is_context_provided(run_status_sensor_fn)
+                            else run_status_sensor_fn()  # type: ignore (strict typeguard)
                         )
                         if sensor_return is not None:
                             context.update_cursor(
@@ -760,10 +761,7 @@ def run_status_sensor(
     default_status: DefaultSensorStatus = DefaultSensorStatus.STOPPED,
     request_job: Optional[Union[GraphDefinition, JobDefinition]] = None,
     request_jobs: Optional[Sequence[Union[GraphDefinition, JobDefinition]]] = None,
-) -> Callable[
-    [RunStatusSensorEvaluationFunction],
-    RunStatusSensorDefinition,
-]:
+) -> Callable[[RunStatusSensorEvaluationFunction], RunStatusSensorDefinition,]:
     """
     Creates a sensor that reacts to a given status of pipeline execution, where the decorated
     function will be run when a pipeline is at the given status.

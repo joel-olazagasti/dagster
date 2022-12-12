@@ -10,9 +10,7 @@ import dask.dataframe as dd
 from dagster import Any, Bool, Field, Float, Int, Permissive, Shape, String
 
 
-def normalize_column_names(
-    df: dd.DataFrame, enabled
-) -> dd.DataFrame:
+def normalize_column_names(df: dd.DataFrame, enabled) -> dd.DataFrame:
     if enabled:
         df.columns = normalize_names(df.columns)
 

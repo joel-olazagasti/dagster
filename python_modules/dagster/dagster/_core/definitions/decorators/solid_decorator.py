@@ -54,7 +54,7 @@ class DecoratedOpFunction(NamedTuple):
 
         return False
 
-    def get_config_arg(self) -> funcsigs.Parameter:
+    def get_config_arg(self) -> Parameter:
         for param in get_function_params(self.decorated_fn):
             if param.name == "config":
                 return param

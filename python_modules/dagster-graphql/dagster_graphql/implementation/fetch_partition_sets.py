@@ -1,7 +1,4 @@
 from typing import TYPE_CHECKING, Optional, Union
-from dagster._core.host_representation.external_data import ExternalPartitionNamesData
-
-from dagster_graphql.schema.util import ResolveInfo
 
 import dagster._check as check
 from dagster._core.host_representation import (
@@ -9,6 +6,7 @@ from dagster._core.host_representation import (
     RepositoryHandle,
     RepositorySelector,
 )
+from dagster._core.host_representation.external_data import ExternalPartitionNamesData
 from dagster._core.storage.pipeline_run import RunsFilter
 from dagster._core.storage.tags import (
     PARTITION_NAME_TAG,
@@ -18,6 +16,8 @@ from dagster._core.storage.tags import (
     get_tag_type,
 )
 from dagster._utils.yaml_utils import dump_run_config_yaml
+
+from dagster_graphql.schema.util import ResolveInfo
 
 from .utils import capture_error
 

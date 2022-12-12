@@ -90,6 +90,7 @@ class RootInputManager(InputManager):
             Any: The data object.
         """
 
+
 @overload
 def root_input_manager(
     config_schema: InputLoadFn,
