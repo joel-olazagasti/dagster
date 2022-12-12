@@ -349,9 +349,7 @@ class GrapheneLaunchRunReexecutionMutation(graphene.Mutation):
 
     @capture_error
     @require_permission_check(Permissions.LAUNCH_PIPELINE_REEXECUTION)
-    def mutate(self, graphene_info: ResolveInfo, **kwargs):
-        execution_params = kwargs.get("executionParams")
-        reexecution_params = kwargs.get("reexecutionParams")
+    def mutate(self, graphene_info: ResolveInfo, execution_params: Any = None, reexecution_params: Any = None):
         check.invariant(
             bool(execution_params) != bool(reexecution_params),
             "Must only provide one of either executionParams or reexecutionParams",
@@ -360,7 +358,7 @@ class GrapheneLaunchRunReexecutionMutation(graphene.Mutation):
         if execution_params:
             return create_execution_params_and_launch_pipeline_reexec(
                 graphene_info,
-                execution_params_dict=kwargs["executionParams"],
+                execution_params_dict=execution_params,
             )
         else:
             return launch_reexecution_from_parent_run(
