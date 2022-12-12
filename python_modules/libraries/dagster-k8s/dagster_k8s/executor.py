@@ -1,6 +1,6 @@
 from typing import Iterator, List, Optional, cast
 
-import kubernetes
+import kubernetes.config
 from dagster import (
     Field,
     IntSource,
@@ -23,7 +23,6 @@ from dagster._core.executor.step_delegating import (
 )
 from dagster._utils import frozentags
 from dagster._utils.merger import merge_dicts
-
 from dagster_k8s.launcher import K8sRunLauncher
 
 from .client import DagsterKubernetesClient
