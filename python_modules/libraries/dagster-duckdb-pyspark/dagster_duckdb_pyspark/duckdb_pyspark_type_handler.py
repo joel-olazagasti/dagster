@@ -1,8 +1,10 @@
 import pyspark
-from dagster import InputContext, MetadataValue, OutputContext, TableColumn, TableSchema
-from dagster._core.storage.db_io_manager import DbTypeHandler, TableSlice
+import pyspark.sql
 from dagster_duckdb.io_manager import DuckDbClient, _connect_duckdb, build_duckdb_io_manager
 from pyspark.sql import SparkSession
+
+from dagster import InputContext, MetadataValue, OutputContext, TableColumn, TableSchema
+from dagster._core.storage.db_io_manager import DbTypeHandler, TableSlice
 
 
 class DuckDBPySparkTypeHandler(DbTypeHandler[pyspark.sql.DataFrame]):
