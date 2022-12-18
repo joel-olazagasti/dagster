@@ -1,6 +1,8 @@
 from typing import Any, Dict, List, Optional, Sequence
 
-import boto3
+import boto3.session
+from dagster_aws.utils import construct_boto_client_retry_config
+
 import dagster._check as check
 
 from dagster_aws.utils import construct_boto_client_retry_config
