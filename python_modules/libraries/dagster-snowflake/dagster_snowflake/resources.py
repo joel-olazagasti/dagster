@@ -1,13 +1,15 @@
 import sys
 import warnings
 from contextlib import closing, contextmanager
-from typing import Any, Mapping, Optional, Sequence, Union
+from typing import Any, Iterator, Mapping, Optional, Sequence, Union
 
 import dagster._check as check
 from dagster import resource
 from dagster._annotations import public
 
 from .configs import define_snowflake_config
+
+from dagster._core.storage.event_log.sql_event_log import SqlDbConnection
 
 try:
     import snowflake.connector
@@ -82,7 +84,7 @@ class SnowflakeConnection:
 
     @public
     @contextmanager
-    def get_connection(self, raw_conn: bool = True):
+    def get_connection(self, raw_conn: bool = True) -> Iterator[Union[SqlDbConnection, snowflake.connector.SnowflakeConnection]]:
         """Gets a connection to Snowflake as a context manager.
 
         If using the execute_query, execute_queries, or load_table_from_local_parquet methods,
@@ -162,9 +164,10 @@ class SnowflakeConnection:
                     sql = sql.encode("utf-8")
 
                 self.log.info("Executing query: " + sql)
-                cursor.execute(sql, parameters)  # pylint: disable=E1101
+                parameters = dict(parameters) if isinstance(parameters, Mapping) else parameters
+                cursor.execute(sql, parameters)
                 if fetch_results:
-                    return cursor.fetchall()  # pylint: disable=E1101
+                    return cursor.fetchall()
                 if use_pandas_result:
                     return cursor.fetch_pandas_all()
 
@@ -217,7 +220,8 @@ class SnowflakeConnection:
                     if sys.version_info[0] < 3:
                         sql = sql.encode("utf-8")
                     self.log.info("Executing query: " + sql)
-                    cursor.execute(sql, parameters)  # pylint: disable=E1101
+                    parameters = dict(parameters) if isinstance(parameters, Mapping) else parameters
+                    cursor.execute(sql, parameters)
                     if fetch_results:
                         if use_pandas_result:
                             results = results.append(cursor.fetch_pandas_all())  # type: ignore
