@@ -49,7 +49,7 @@ class NumpyCsvIOManager(PandasCsvIOManager):
                     "strings": ["ten", "twenty", "thirty", "forty"],
                 }
             )
-            return df
+            return df.to_numpy()
 
 
 @io_manager(
