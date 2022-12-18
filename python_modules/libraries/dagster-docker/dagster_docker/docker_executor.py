@@ -1,5 +1,9 @@
 from typing import Iterator, Optional, cast
 
+import docker
+import docker.errors
+from dagster_docker.utils import DOCKER_CONFIG_SCHEMA, validate_docker_config, validate_docker_image
+
 import dagster._check as check
 import docker
 from dagster import Field, IntSource, executor
