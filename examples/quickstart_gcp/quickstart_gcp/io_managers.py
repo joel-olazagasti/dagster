@@ -46,7 +46,9 @@ class BigQueryDataframeIOManager(IOManager):
 
     def load_input(self, context: InputContext):
         # upstream_output.asset_key is the asset key given to the Out that we're loading for
-        table_name = context.upstream_output.asset_key.to_python_identifier()
+        output = context.upstream_output
+        assert output is not None
+        table_name = output.asset_key.to_python_identifier()
 
         df = pandas_gbq.read_gbq(
             f"SELECT * FROM `{self._dataset_id}.{table_name}`", credentials=self._credentials
