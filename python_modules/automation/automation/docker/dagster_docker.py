@@ -68,8 +68,7 @@ class DagsterDockerImage(
             check.opt_str_param(
                 images_path,
                 "images_path",
-                default_images_path(),
-            ),
+            ) or default_images_path(),
             check.callable_param(build_cm, "build_cm"),
         )
 
