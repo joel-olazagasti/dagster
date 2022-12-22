@@ -38,7 +38,6 @@ MIN_INT = -2147483648
 def iterate_metadata_entries(
     metadata_entries: Sequence[Union[MetadataEntry, PartitionMetadataEntry]]
 ) -> Iterator[Any]:
-    from ..schema.table import GrapheneTable, GrapheneTableSchema
     from ..schema.metadata import (
         GrapheneAssetMetadataEntry,
         GrapheneBoolMetadataEntry,
@@ -56,6 +55,7 @@ def iterate_metadata_entries(
         GrapheneTextMetadataEntry,
         GrapheneUrlMetadataEntry,
     )
+    from ..schema.table import GrapheneTable, GrapheneTableSchema
 
     check.sequence_param(metadata_entries, "metadata_entries", of_type=MetadataEntry)
     for metadata_entry in metadata_entries:

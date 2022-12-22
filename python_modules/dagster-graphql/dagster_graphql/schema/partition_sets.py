@@ -21,7 +21,6 @@ from dagster_graphql.implementation.fetch_partition_sets import (
     get_partition_tags,
     get_partitions,
 )
-from dagster_graphql.implementation.fetch_runs import get_runs
 
 from .backfill import GraphenePartitionBackfill
 from .errors import (
@@ -153,6 +152,8 @@ class GraphenePartition(graphene.ObjectType):
         cursor: Optional[str] = None,
         limit: Optional[int] = None,
     ):
+        from ..implementation.fetch_runs import get_runs
+
         partition_tags = {
             PARTITION_SET_TAG: self._external_partition_set.name,
             PARTITION_NAME_TAG: self._partition_name,

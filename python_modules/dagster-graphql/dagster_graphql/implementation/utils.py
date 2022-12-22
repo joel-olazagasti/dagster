@@ -30,11 +30,9 @@ from dagster._core.workspace.context import BaseWorkspaceRequestContext
 from dagster._utils.error import serializable_error_info_from_exc_info
 from typing_extensions import ParamSpec, TypeAlias
 
-from dagster_graphql.schema.errors import GrapheneError
-from dagster_graphql.schema.util import ResolveInfo
-
 if TYPE_CHECKING:
-    from dagster_graphql.schema.errors import GraphenePythonError
+    from dagster_graphql.schema.errors import GrapheneError, GraphenePythonError
+    from dagster_graphql.schema.util import ResolveInfo
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -82,7 +80,7 @@ def check_permission(permission: str) -> Callable[[GrapheneResolverFn], Graphene
     return decorator
 
 
-def assert_permission(graphene_info: ResolveInfo, permission: str) -> None:
+def assert_permission(graphene_info: "ResolveInfo", permission: str) -> None:
     from dagster_graphql.schema.errors import GrapheneUnauthorizedError
 
     context = cast(BaseWorkspaceRequestContext, graphene_info.context)
@@ -122,7 +120,9 @@ class ErrorCapture:
             ErrorCapture.observer.reset(token)
 
 
-def capture_error(fn: Callable[P, T]) -> Callable[P, Union[T, GrapheneError, GraphenePythonError]]:
+def capture_error(
+    fn: Callable[P, T]
+) -> Callable[P, Union[T, "GrapheneError", GraphenePythonError]]:
     def _fn(*args: P.args, **kwargs: P.kwargs):
         try:
             return fn(*args, **kwargs)

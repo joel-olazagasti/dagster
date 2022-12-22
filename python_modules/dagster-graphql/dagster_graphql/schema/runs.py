@@ -8,7 +8,6 @@ from dagster._utils.error import serializable_error_info_from_exc_info
 from dagster._utils.yaml_utils import load_run_config_yaml
 from graphene.types.generic import GenericScalar
 
-from ..implementation.fetch_runs import get_runs, get_runs_count
 from ..implementation.utils import UserFacingGraphQLError
 from .errors import (
     GrapheneInvalidPipelineRunsFilterError,
@@ -111,9 +110,13 @@ class GrapheneRuns(graphene.ObjectType):
         self._limit = limit
 
     def resolve_results(self, graphene_info: ResolveInfo):
+        from ..implementation.fetch_runs import get_runs
+
         return get_runs(graphene_info, self._filters, self._cursor, self._limit)
 
     def resolve_count(self, graphene_info: ResolveInfo):
+        from ..implementation.fetch_runs import get_runs_count
+
         return get_runs_count(graphene_info, self._filters)
 
 

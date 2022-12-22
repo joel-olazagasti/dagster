@@ -16,7 +16,6 @@ from dagster_graphql.schema.metadata import GrapheneMetadataEntry
 from ...implementation.events import from_event_record
 from ...implementation.fetch_assets import get_assets_for_run_id, get_unique_asset_id
 from ...implementation.fetch_pipelines import get_pipeline_reference_or_raise
-from ...implementation.fetch_runs import get_runs, get_stats, get_step_stats
 from ...implementation.fetch_schedules import get_schedules_for_pipeline
 from ...implementation.fetch_sensors import get_sensors_for_pipeline
 from ...implementation.loader import BatchRunLoader, RepositoryScopedBatchLoader
@@ -361,9 +360,13 @@ class GrapheneRun(graphene.ObjectType):
         return None
 
     def resolve_stats(self, graphene_info: ResolveInfo):
+        from ...implementation.fetch_runs import get_stats
+
         return get_stats(graphene_info, self.run_id)
 
     def resolve_stepStats(self, graphene_info: ResolveInfo):
+        from ...implementation.fetch_runs import get_step_stats
+
         return get_step_stats(graphene_info, self.run_id)
 
     def resolve_computeLogs(self, _graphene_info: ResolveInfo, stepKey):
@@ -627,6 +630,8 @@ class GrapheneIPipelineSnapshotMixin:
         return self.get_represented_pipeline().solid_selection
 
     def resolve_runs(self, graphene_info: ResolveInfo, **kwargs):
+        from ...implementation.fetch_runs import get_runs
+
         pipeline = self.get_represented_pipeline()
         if isinstance(pipeline, ExternalPipeline):
             runs_filter = RunsFilter(

@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Optional, Sequence, Tuple, cast
 
-
 import dagster._check as check
 from dagster._core.errors import DagsterRunNotFoundError
 from dagster._core.execution.plan.resume_retry import get_retry_steps_from_parent_run
@@ -30,6 +29,7 @@ def compute_step_keys_to_execute(
     graphene_info: "ResolveInfo", execution_params: ExecutionParams
 ) -> Tuple[Optional[Sequence[str]], Optional[KnownExecutionState]]:
     from dagster_graphql.schema.util import ResolveInfo
+
     check.inst_param(graphene_info, "graphene_info", ResolveInfo)
     check.inst_param(execution_params, "execution_params", ExecutionParams)
 
