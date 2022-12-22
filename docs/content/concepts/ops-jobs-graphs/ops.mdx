@@ -91,9 +91,11 @@ An op only starts to execute once all of its inputs have been resolved. Inputs c
 You can use a [Dagster Type](/concepts/types) to provide a function that validates an op's input every time the op runs. In this case, you use a dictionary of <PyObject object="In" pluralize /> corresponding to the decorated function arguments.
 
 ```python file=/concepts/ops_jobs_graphs/ops.py startafter=start_typed_input_op_marker endbefore=end_typed_input_op_marker
-MyDagsterType = DagsterType(
-    type_check_fn=lambda _, value: value % 2 == 0, name="MyDagsterType"
-)
+def is_even(_, value: object) -> bool:
+    return isinstance(value, int) and value % 2 == 0
+
+
+MyDagsterType = DagsterType(type_check_fn=is_even, name="MyDagsterType")
 
 
 @op(ins={"abc": In(dagster_type=MyDagsterType)})
