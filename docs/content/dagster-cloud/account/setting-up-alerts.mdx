@@ -12,9 +12,13 @@ In this guide, we'll walk you through configuring job alerts in Dagster Cloud.
 
 ## Understanding alert policies
 
-Alert policies define which jobs will trigger an alert, the conditions under which an alert will be sent, and how the alert will be sent.
+Alert policies define which events will trigger an alert, the conditions under which an alert will be sent, and how the alert will be sent.
 
-An alert policy includes a set of configured tags. If an alert policy has no configured tags, all jobs will be eligible for that alert. Otherwise, only jobs that contain all the tags for a given alert policy are eligible for that alert.
+Currently, alerts can be triggered by job failure/success, or schedule/sensor tick failure.
+
+Job-based alert policies includes a set of configured tags. If an alert policy has no configured tags, all jobs will be eligible for that alert. Otherwise, only jobs that contain all the tags for a given alert policy are eligible for that alert.
+
+Alert policies created for schedule/sensor tick failure will apply to all schedules / sensors. However, you will only receive alerts when the schedule/sensor changes from a state of succeeding to failing, so subsequent failures will not trigger new alerts.
 
 Alert policies are configured on a per deployment basis. For example, alerts configured in a `prod` deployment are only applicable to jobs in that deployment.
 
@@ -34,7 +38,7 @@ Currently, Slack and email notifications are supported.
 - [Enabling and disabling alert policies](#enabling-and-disabling-alert-policies)
 - [Deleting alert policies](#deleting-alert-policies)
 
-### Creating alert policies
+### Creating run-based alert policies
 
 1. Sign in to your Dagster Cloud account.
 
@@ -44,10 +48,14 @@ Currently, Slack and email notifications are supported.
 
 4. Click **+ Create alert policy**.
 
+5. From the `Alert Policy Type` drop-down, choose `Run Alert` or `Schedule/Sensor Alert`.
+
 5. In the **Create alert policy** window, fill in the following:
 
    - **Alert policy name** - Enter a name for the alert policy. For example, `slack_urgent_failure`
    - **Description** - Enter a description for the alert policy
+
+  For run-based alerts, fill out these additional options:
    - **Tags** - Add tag(s) for the alert policy. Jobs with these tags will trigger the alert. For example: `level:critical` or `team:sales`
    - **Events** - Select whether the alert should trigger on job success, failure, or both
    - **Notification service** - Select the service for the alert policy:
