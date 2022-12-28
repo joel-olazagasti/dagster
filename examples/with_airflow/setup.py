@@ -6,7 +6,7 @@ setup(
     install_requires=[
         "dagster",
         "dagster_airflow",
-        "apache-airflow==2.3.0",
+        "apache-airflow==2.4.3",
         # pin jinja2 to version compatible with dagit and airflow
         "jinja2==3.0.3",
         # for the kubernetes operator
