@@ -281,26 +281,25 @@ class MultiPartitionsDefinition(PartitionsDefinition):
 
 class MultiPartitionsSubset(DefaultPartitionsSubset):
     def __init__(self, partitions_def: PartitionsDefinition, subset: Optional[Set[str]] = None):
-        check.opt_set_param(subset, "subset")
         if not isinstance(partitions_def, MultiPartitionsDefinition):
             check.failed(
                 "Must pass a MultiPartitionsDefinition object to deserialize MultiPartitionsSubset."
             )
-        self._partitions_def = partitions_def
-        self._subset = (
+        validated_subset = (
             (
                 subset
                 & set(
                     [
                         key
                         for key in subset
-                        if self._partitions_def.has_partition_key(cast(MultiPartitionKey, key))
+                        if partitions_def.has_partition_key(cast(MultiPartitionKey, key))
                     ]
                 )
             )
             if subset
             else set()
         )
+        super(MultiPartitionsSubset, self).__init__(partitions_def, validated_subset)
 
     def with_partition_keys(self, partition_keys: Iterable[str]) -> "MultiPartitionsSubset":
         return MultiPartitionsSubset(
@@ -310,7 +309,9 @@ class MultiPartitionsSubset(DefaultPartitionsSubset):
                 [
                     key
                     for key in partition_keys
-                    if self._partitions_def.has_partition_key(cast(MultiPartitionKey, key))
+                    if cast(MultiPartitionsDefinition, self._partitions_def).has_partition_key(
+                        cast(MultiPartitionKey, key)
+                    )
                 ]
             ),
         )
