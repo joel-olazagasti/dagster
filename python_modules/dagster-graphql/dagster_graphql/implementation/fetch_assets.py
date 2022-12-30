@@ -1,16 +1,6 @@
 import datetime
 from collections import defaultdict
-from typing import (
-    TYPE_CHECKING,
-    Dict,
-    Iterator,
-    List,
-    Mapping,
-    Optional,
-    Sequence,
-    Tuple,
-    cast,
-)
+from typing import TYPE_CHECKING, Dict, Iterator, List, Mapping, Optional, Sequence, Tuple, cast
 
 from dagster_graphql.implementation.loader import (
     CrossRepoAssetDependedByLoader,
@@ -35,9 +25,7 @@ from dagster._core.definitions.partition import PartitionsSubset
 from dagster._core.definitions.time_window_partitions import TimeWindowPartitionsDefinition
 from dagster._core.events import ASSET_EVENTS
 from dagster._core.host_representation.external import ExternalRepository
-from dagster._core.host_representation.external_data import (
-    ExternalAssetNode,
-)
+from dagster._core.host_representation.external_data import ExternalAssetNode
 from dagster._core.host_representation.repository_location import RepositoryLocation
 from dagster._core.storage.partition_status_cache import (
     get_and_update_asset_status_cache_values,
