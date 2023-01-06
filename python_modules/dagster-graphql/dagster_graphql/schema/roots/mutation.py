@@ -66,6 +66,7 @@ from ..sensors import (
     GrapheneStartSensorMutation,
     GrapheneStopSensorMutation,
 )
+from ..instigator_launch import GrapheneTestInstigatorMutation
 from ..util import non_null_list
 
 
@@ -634,6 +635,7 @@ class GrapheneDagitMutation(graphene.ObjectType):
     start_sensor = GrapheneStartSensorMutation.Field()
     set_sensor_cursor = GrapheneSetSensorCursorMutation.Field()
     stop_sensor = GrapheneStopSensorMutation.Field()
+    test_instigator = GrapheneTestInstigatorMutation.Field()
     terminate_pipeline_execution = GrapheneTerminateRunMutation.Field()
     terminate_run = GrapheneTerminateRunMutation.Field()
     delete_pipeline_run = GrapheneDeleteRunMutation.Field()
