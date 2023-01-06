@@ -25,7 +25,7 @@ def persist_run_for_production(
     NOT_STARTED state.
 
     Parameters:
-        instance (DagsterInstance): Instace to execute against
+        instance (DagsterInstance): Instance to execute against
         repository_location (RepositoryLocation): RepositoryLocation corresponding to user code
         pipeline_selector (PipelineSelector): Selector that encapsulates subset of pipeline that will be executed
         run_config (Mapping[str, object]): Run configuration for this run
