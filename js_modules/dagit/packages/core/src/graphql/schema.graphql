@@ -1692,6 +1692,11 @@ type RepositoryNotFoundError implements Error {
   repositoryLocationName: String!
 }
 
+type ResourceNotFoundError implements Error {
+  message: String!
+  resourceName: String!
+}
+
 type RunGroupNotFoundError implements Error {
   message: String!
   runId: String!
@@ -1780,6 +1785,7 @@ type Repository {
   assetNodes: [AssetNode!]!
   displayMetadata: [RepositoryMetadata!]!
   assetGroups: [AssetGroup!]!
+  topLevelResources: [TopLevelResource!]!
 }
 
 type Job implements SolidContainer & IPipelineSnapshot {
@@ -1809,6 +1815,18 @@ type Job implements SolidContainer & IPipelineSnapshot {
 type AssetGroup {
   groupName: String!
   assetKeys: [AssetKey!]!
+}
+
+type TopLevelResource {
+  name: String!
+  description: String
+  configFields: [ConfigTypeField!]!
+  configuredValues: [ConfiguredValue!]!
+}
+
+type ConfiguredValue {
+  key: String!
+  value: String!
 }
 
 type RepositoryConnection {
@@ -1914,6 +1932,12 @@ input PipelineSelector {
 input RepositorySelector {
   repositoryName: String!
   repositoryLocationName: String!
+}
+
+input ResourceSelector {
+  repositoryName: String!
+  repositoryLocationName: String!
+  resourceName: String!
 }
 
 input ScheduleSelector {
@@ -2592,6 +2616,8 @@ type DagitQuery {
   scheduler: SchedulerOrError!
   scheduleOrError(scheduleSelector: ScheduleSelector!): ScheduleOrError!
   schedulesOrError(repositorySelector: RepositorySelector!): SchedulesOrError!
+  topLevelResourceOrError(resourceSelector: ResourceSelector!): TopLevelResourceOrError!
+  topLevelResourcesOrError(repositorySelector: RepositorySelector!): ResourcesOrError!
   sensorOrError(sensorSelector: SensorSelector!): SensorOrError!
   sensorsOrError(repositorySelector: RepositorySelector!): SensorsOrError!
   instigationStateOrError(instigationSelector: InstigationSelector!): InstigationStateOrError!
@@ -2684,6 +2710,14 @@ input GraphSelector {
   graphName: String!
   repositoryName: String!
   repositoryLocationName: String!
+}
+
+union TopLevelResourceOrError = TopLevelResource | ResourceNotFoundError | PythonError
+
+union ResourcesOrError = TopLevelResources | RepositoryNotFoundError | PythonError
+
+type TopLevelResources {
+  results: [TopLevelResource!]!
 }
 
 input AssetGroupSelector {

@@ -121,6 +121,9 @@ const ROOT_WORKSPACE_QUERY = graphql(`
     assetGroups {
       groupName
     }
+    topLevelResources {
+      name
+    }
     ...RepositoryInfoFragment
   }
 
