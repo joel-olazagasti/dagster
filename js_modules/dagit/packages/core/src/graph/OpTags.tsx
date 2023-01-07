@@ -23,7 +23,7 @@ export interface IOpTag {
   onClick: (e: React.MouseEvent) => void;
 }
 
-interface IOpTagsProps {
+interface OpTagsProps {
   style: React.CSSProperties;
   minified: boolean;
   tags: IOpTag[];
@@ -67,7 +67,30 @@ function generateColorForLabel(label = '') {
   }, 75%, 45%)`;
 }
 
-export const OpTags = React.memo(({tags, style, minified}: IOpTagsProps) => {
+export const AssetComputeKindTag: React.FC<{
+  definition: {computeKind: string | null};
+  style: React.CSSProperties;
+}> = ({definition, style}) => {
+  if (!definition.computeKind) {
+    return null;
+  }
+  return (
+    <OpTags
+      minified={false}
+      style={style}
+      tags={[
+        {
+          label: definition.computeKind,
+          onClick: () => {
+            window.requestAnimationFrame(() => document.dispatchEvent(new Event('show-kind-info')));
+          },
+        },
+      ]}
+    />
+  );
+};
+
+export const OpTags = React.memo(({tags, style, minified}: OpTagsProps) => {
   return (
     <OpTagsContainer style={style} $minified={minified}>
       {tags.map((tag) => (

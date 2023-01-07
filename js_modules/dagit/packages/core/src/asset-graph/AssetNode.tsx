@@ -6,7 +6,7 @@ import styled from 'styled-components/macro';
 import {withMiddleTruncation} from '../app/Util';
 import {humanizedLateString, isAssetLate} from '../assets/CurrentMinutesLateTag';
 import {isAssetStale} from '../assets/StaleTag';
-import {OpTags} from '../graph/OpTags';
+import {AssetComputeKindTag} from '../graph/OpTags';
 import {graphql} from '../graphql';
 import {AssetNodeFragmentFragment} from '../graphql/graphql';
 import {TimestampDisplay} from '../schedules/TimestampDisplay';
@@ -76,22 +76,7 @@ export const AssetNode: React.FC<{
           ) : isSource ? null : (
             <AssetNodeStatusRow definition={definition} liveData={liveData} stepKey={stepKey} />
           )}
-          {definition.computeKind && (
-            <OpTags
-              minified={false}
-              style={{right: -2, paddingTop: 7}}
-              tags={[
-                {
-                  label: definition.computeKind,
-                  onClick: () => {
-                    window.requestAnimationFrame(() =>
-                      document.dispatchEvent(new Event('show-kind-info')),
-                    );
-                  },
-                },
-              ]}
-            />
-          )}
+          <AssetComputeKindTag definition={definition} style={{right: -2, paddingTop: 7}} />
         </AssetNodeBox>
       </AssetNodeContainer>
     </AssetInsetForHoverEffect>

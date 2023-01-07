@@ -9,6 +9,7 @@ import {
   toGraphId,
 } from '../asset-graph/Utils';
 import {DagsterTypeSummary} from '../dagstertype/DagsterType';
+import {AssetComputeKindTag} from '../graph/OpTags';
 import {graphql} from '../graphql';
 import {
   AssetNodeDefinitionFragmentFragment,
@@ -62,7 +63,7 @@ export const AssetNodeDefinition: React.FC<{
             flex={{justifyContent: 'space-between', gap: 8}}
           >
             <Subheading>Description</Subheading>
-            <DefinitionLocation assetNode={assetNode} repoAddress={repoAddress} />
+            <DescriptionAnnotations assetNode={assetNode} repoAddress={repoAddress} />
           </Box>
           <Box
             padding={{vertical: 16, horizontal: 24}}
@@ -194,7 +195,7 @@ export const AssetNodeDefinition: React.FC<{
   );
 };
 
-const DefinitionLocation: React.FC<{
+const DescriptionAnnotations: React.FC<{
   assetNode: AssetNodeDefinitionFragmentFragment;
   repoAddress: RepoAddress;
 }> = ({assetNode, repoAddress}) => (
@@ -215,6 +216,10 @@ const DefinitionLocation: React.FC<{
     {assetNode.isSource && (
       <Caption style={{lineHeight: '16px', marginTop: 2}}>Source Asset</Caption>
     )}
+    <AssetComputeKindTag
+      style={{position: 'relative', marginTop: -2, marginBottom: -2}}
+      definition={assetNode}
+    />
   </Box>
 );
 
