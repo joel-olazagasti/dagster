@@ -259,7 +259,6 @@ class MultiPartitionsDefinition(PartitionsDefinition):
         keys_per_dimension = [
             (dim.name, dim.partitions_def.get_partition_keys()) for dim in self._partitions_defs
         ]
-
         partition_key_dims_by_idx = dict(enumerate([dim.name for dim in self._partitions_defs]))
         for idx, key in enumerate(partition_key_strs):
             check.invariant(
@@ -328,7 +327,7 @@ class MultiPartitionsSubset(DefaultPartitionsSubset):
             subset=set(
                 [
                     partitions_def.get_multi_partition_key_from_str(key)
-                    for key in json.loads(serialized)
+                    for key in json.loads(serialized)["subset"]
                 ]
             ),
             partitions_def=partitions_def,

@@ -82,9 +82,6 @@ describe('usePartitionHealthData', () => {
       expect(assetHealth.stateForKey(['2022-01-01'])).toEqual(MISSING);
       expect(assetHealth.stateForKey(['2022-01-04'])).toEqual(SUCCESS);
 
-      expect(assetHealth.stateForPartialKey(['2022-01-01'])).toEqual(MISSING);
-      expect(assetHealth.stateForPartialKey(['2022-01-04'])).toEqual(SUCCESS);
-
       expect(assetHealth.stateForSingleDimension(0, '2022-01-01')).toEqual(MISSING);
       expect(assetHealth.stateForSingleDimension(0, '2022-01-04')).toEqual(SUCCESS);
     });
@@ -106,9 +103,6 @@ describe('usePartitionHealthData', () => {
       // Ask for the state of a full key (cell)
       expect(assetHealth.stateForKey(['2022-01-01', 'TN'])).toEqual(MISSING);
       expect(assetHealth.stateForKey(['2022-01-04', 'NY'])).toEqual(SUCCESS);
-
-      // Ask for the state of a partial key (row)
-      expect(assetHealth.stateForPartialKey(['2022-01-01'])).toEqual(SUCCESS_MISSING);
 
       // Ask for the state of a row
       expect(assetHealth.stateForSingleDimension(0, '2022-01-03')).toEqual(SUCCESS_MISSING);
