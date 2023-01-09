@@ -1,8 +1,14 @@
 import inspect
 
 from dagster._config.config_type import ConfigType
+from dagster._config.post_process import resolve_defaults
 from dagster._config.source import BoolSource, IntSource, StringSource
-from dagster._core.definitions.definition_config_schema import IDefinitionConfigSchema
+from dagster._config.validate import validate_config
+from dagster._core.definitions.definition_config_schema import (
+    DefinitionConfigSchema,
+    IDefinitionConfigSchema,
+)
+from dagster._core.errors import DagsterInvalidConfigError
 
 try:
     from functools import cached_property
@@ -13,7 +19,7 @@ except ImportError:
 
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Type, cast
+from typing import Any, Optional, Type
 
 from pydantic import BaseModel, Extra
 from pydantic.fields import SHAPE_SINGLETON, ModelField
@@ -23,7 +29,6 @@ from dagster import Field, Shape
 from dagster._config.field_utils import (
     FIELD_NO_DEFAULT_PROVIDED,
     Permissive,
-    config_dictionary_from_values,
     convert_potential_field,
 )
 from dagster._core.definitions.resource_definition import ResourceDefinition, ResourceFunction
@@ -76,21 +81,65 @@ class PermissiveConfig(Config):
     """
 
 
+# This is from https://github.com/dagster-io/dagster/pull/11470
+def _apply_defaults_to_schema_field(field: Field, additional_default_values: Any) -> Field:
+    # This work by validating the top-level config and then
+    # just setting it at that top-level field. Config fields
+    # can actually take nested values so we only need to set it
+    # at a single level
+
+    evr = validate_config(field.config_type, additional_default_values)
+
+    if not evr.success:
+        raise DagsterInvalidConfigError(
+            "Incorrect values passed to .configured",
+            evr.errors,
+            additional_default_values,
+        )
+
+    if field.default_provided:
+        # In the case where there is already a default config value
+        # we can apply "additional" defaults by actually invoking
+        # the config machinery. Meaning we pass the new_additional_default_values
+        # and then resolve the existing defaults over them. This preserves the default
+        # values that are not specified in new_additional_default_values and then
+        # applies the new value as the default value of the field in question.
+        defaults_processed_evr = resolve_defaults(field.config_type, additional_default_values)
+        check.invariant(
+            defaults_processed_evr.success, "Since validation passed, this should always work."
+        )
+        default_to_pass = defaults_processed_evr.value
+        return copy_with_default(field, default_to_pass)
+    else:
+        return copy_with_default(field, additional_default_values)
+
+
+def copy_with_default(old_field: Field, new_config_value: Any) -> Field:
+    return Field(
+        config=old_field.config_type,
+        default_value=new_config_value,
+        is_required=False,
+        description=old_field.description,
+    )
+
+
 def _curry_config_schema(schema_field: Field, data: Any) -> IDefinitionConfigSchema:
     """Return a new config schema configured with the passed in data"""
 
-    # We don't do anything with this resource definition, other than
-    # use it to construct configured schema
-    inner_resource_def = ResourceDefinition(lambda _: None, schema_field)
-    configured_resource_def = inner_resource_def.configured(
-        config_dictionary_from_values(
-            data,
-            schema_field,
-        ),
-    )
-    # this cast required to make mypy happy, which does not support Self
-    configured_resource_def = cast(ResourceDefinition, configured_resource_def)
-    return configured_resource_def.config_schema
+    # # We don't do anything with this resource definition, other than
+    # # use it to construct configured schema
+    # inner_resource_def = ResourceDefinition(lambda _: None, schema_field)
+    # configured_resource_def = inner_resource_def.configured(
+    #     config_dictionary_from_values(
+    #         data,
+    #         schema_field,
+    #     ),
+    # )
+    # # this cast required to make mypy happy, which does not support Self
+    # configured_resource_def = cast(ResourceDefinition, configured_resource_def)
+    # return configured_resource_def.config_schema
+
+    return DefinitionConfigSchema(_apply_defaults_to_schema_field(schema_field, data))
 
 
 class Resource(

@@ -3,6 +3,7 @@ from typing import Any, Callable, List, Mapping, Optional, Union, overload
 
 import dagster._check as check
 from dagster._core.decorator_utils import get_function_params
+from dagster._core.definitions.resource_definition import ResourceDefinition
 from dagster._core.errors import DagsterInvalidDefinitionError
 
 from ..executor_definition import ExecutorDefinition
@@ -38,6 +39,7 @@ class _Repository:
         description: Optional[str] = None,
         default_executor_def: Optional[ExecutorDefinition] = None,
         default_logger_defs: Optional[Mapping[str, LoggerDefinition]] = None,
+        top_level_resources: Optional[Mapping[str, ResourceDefinition]] = None,
     ):
         self.name = check.opt_str_param(name, "name")
         self.description = check.opt_str_param(description, "description")
@@ -46,6 +48,9 @@ class _Repository:
         )
         self.default_logger_defs = check.opt_mapping_param(
             default_logger_defs, "default_logger_defs", key_type=str, value_type=LoggerDefinition
+        )
+        self.top_level_resources = check.opt_mapping_param(
+            top_level_resources, "top_level_resources", key_type=str, value_type=ResourceDefinition
         )
 
     def __call__(
@@ -109,6 +114,7 @@ class _Repository:
                     repository_defns,
                     default_executor_def=self.default_executor_def,
                     default_logger_defs=self.default_logger_defs,
+                    top_level_resources=self.top_level_resources,
                 )
             )
 
@@ -144,6 +150,7 @@ class _Repository:
                 description=self.description,
                 default_executor_def=self.default_executor_def,
                 default_logger_defs=self.default_logger_defs,
+                top_level_resources=self.top_level_resources,
             )
         else:
             repository_def = RepositoryDefinition(
@@ -179,6 +186,7 @@ def repository(
     description: Optional[str] = None,
     default_executor_def: Optional[ExecutorDefinition] = None,
     default_logger_defs: Optional[Mapping[str, LoggerDefinition]] = None,
+    top_level_resources: Optional[Mapping[str, ResourceDefinition]] = None,
 ) -> Union[RepositoryDefinition, PendingRepositoryDefinition, _Repository]:
     """Create a repository from the decorated function.
 
@@ -210,6 +218,8 @@ def repository(
         name (Optional[str]): The name of the repository. Defaults to the name of the decorated
             function.
         description (Optional[str]): A string description of the repository.
+        top_level_resources (Optional[Mapping[str, ResourceDefinition]]): A dict of top-level
+            resource keys to defintions, for resources which should be displayed in the UI.
 
     Example:
 
@@ -315,4 +325,5 @@ def repository(
         description=description,
         default_executor_def=default_executor_def,
         default_logger_defs=default_logger_defs,
+        top_level_resources=top_level_resources,
     )

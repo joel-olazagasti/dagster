@@ -16,6 +16,7 @@ from typing import (
 )
 
 import dagster._check as check
+from dagster._config.snap import ConfigFieldSnap, ConfigSchemaSnapshot
 from dagster._core.definitions.events import AssetKey
 from dagster._core.definitions.metadata import MetadataEntry, PartitionMetadataEntry
 from dagster._core.definitions.run_request import InstigatorType
@@ -46,6 +47,7 @@ from .external_data import (
     ExternalPipelineData,
     ExternalPresetData,
     ExternalRepositoryData,
+    ExternalResourceData,
     ExternalScheduleData,
     ExternalSensorData,
     ExternalSensorMetadata,
@@ -130,6 +132,23 @@ class ExternalRepository:
 
     def get_external_schedules(self) -> Sequence[ExternalSchedule]:
         return self._external_schedules.values()
+
+    @property
+    @cached_method
+    def _external_resources(self) -> Dict[str, ExternalResource]:
+        return {
+            external_resource_data.name: ExternalResource(external_resource_data, self._handle)
+            for external_resource_data in self.external_repository_data.external_resource_data
+        }
+
+    def has_external_resource(self, resource_name: str) -> bool:
+        return resource_name in self._external_resources
+
+    def get_external_resource(self, resource_name: str) -> ExternalResource:
+        return self._external_resources[resource_name]
+
+    def get_external_resources(self) -> Sequence[ExternalResource]:
+        return self._external_resources.values()
 
     @property
     @cached_method
@@ -505,6 +524,40 @@ class ExternalExecutionPlan:
             ]
 
         return self._topological_step_levels
+
+
+class ExternalResource:
+    """
+    Represents a top-level resource in a repository, e.g. one passed through the Definitions API.
+    """
+
+    def __init__(self, external_resource_data: ExternalResourceData, handle: RepositoryHandle):
+        self._external_resource_data = check.inst_param(
+            external_resource_data, "external_resource_data", ExternalResourceData
+        )
+        self._handle = InstigatorHandle(
+            self._external_resource_data.name, check.inst_param(handle, "handle", RepositoryHandle)
+        )
+
+    @property
+    def name(self) -> str:
+        return self._external_resource_data.name
+
+    @property
+    def description(self) -> Optional[str]:
+        return self._external_resource_data.resource_snapshot.description
+
+    @property
+    def config_field_snaps(self) -> List[ConfigFieldSnap]:
+        return self._external_resource_data.config_field_snaps
+
+    @property
+    def configured_values(self) -> Dict[str, str]:
+        return self._external_resource_data.configured_values
+
+    @property
+    def config_schema_snap(self) -> ConfigSchemaSnapshot:
+        return self._external_resource_data.config_schema_snap
 
 
 class ExternalSchedule:
