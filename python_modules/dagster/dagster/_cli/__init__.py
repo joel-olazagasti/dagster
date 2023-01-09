@@ -10,6 +10,7 @@ from .project import project_cli
 from .run import run_cli
 from .schedule import schedule_cli
 from .sensor import sensor_cli
+from .start import start_command
 
 
 def create_dagster_cli():
@@ -23,6 +24,7 @@ def create_dagster_cli():
         "asset": asset_cli,
         "debug": debug_cli,
         "project": project_cli,
+        "start": start_command,
     }
 
     @click.group(
