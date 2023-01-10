@@ -1,4 +1,4 @@
-from typing import Dict, List, Mapping, Optional, Sequence,
+from typing import AbstractSet, Dict, List, Mapping, Optional, Sequence
 from dagster._core.definitions.events import AssetKey
 from dagster._core.definitions.logical_version import DEFAULT_LOGICAL_VERSION, CachingProjectedLogicalVersionResolver, LogicalVersion, extract_logical_version_from_entry
 from dagster._core.definitions.run_request import RunRequest
@@ -10,7 +10,7 @@ from dagster._core.workspace.context import WorkspaceProcessContext, WorkspaceRe
 import dagster._check as check
 
 def resolve_asset_selection(context: WorkspaceProcessContext, run_request: RunRequest) -> Optional[Sequence[AssetKey]]:
-    if run_request.stale_only:
+    if run_request.stale_assets_only:
         asset_selection = check.not_none(run_request.asset_selection)
         stale_keys: List[AssetKey] = []
         request_context = context.create_request_context()
@@ -19,7 +19,7 @@ def resolve_asset_selection(context: WorkspaceProcessContext, run_request: RunRe
         resolver = CachingProjectedLogicalVersionResolver(context.instance, repositories, key_to_node_map)
         for asset_key in asset_selection:
             projected_logical_version = resolver.get(asset_key)
-            current_logical_version = get_current_logical_version(key_to_node_map[key], context.instance)
+            current_logical_version = get_current_logical_version(key_to_node_map[asset_key], context.instance)
             if projected_logical_version != current_logical_version:
                 stale_keys.append(asset_key)
         return stale_keys
@@ -27,7 +27,7 @@ def resolve_asset_selection(context: WorkspaceProcessContext, run_request: RunRe
         return run_request.asset_selection
 
 def get_repositories(context: WorkspaceRequestContext) -> Sequence[ExternalRepository]:
-    return [repo for repo in loc.get_repositories().values() for loc in context.repository_locations]
+    return [repo for loc in context.repository_locations for repo in loc.get_repositories().values() ]
 
 def get_asset_nodes_by_asset_key(repositories: Sequence[ExternalRepository]) -> Mapping[AssetKey, ExternalAssetNode]:
     """
@@ -35,20 +35,19 @@ def get_asset_nodes_by_asset_key(repositories: Sequence[ExternalRepository]) -> 
     has an op.
     """
     asset_nodes_by_asset_key: Dict[AssetKey, ExternalAssetNode] = {}
-    for location in context.repository_locations:
-        for repository in location.get_repositories().values():
-            for external_asset_node in repository.get_external_asset_nodes():
-                preexisting_node = asset_nodes_by_asset_key.get(external_asset_node.asset_key)
-                if preexisting_node is None or preexisting_node.is_source:
-                    asset_nodes_by_asset_key[external_asset_node.asset_key] = external_asset_node
+    for repository in repositories:
+        for external_asset_node in repository.get_external_asset_nodes():
+            preexisting_node = asset_nodes_by_asset_key.get(external_asset_node.asset_key)
+            if preexisting_node is None or preexisting_node.is_source:
+                asset_nodes_by_asset_key[external_asset_node.asset_key] = external_asset_node
     return asset_nodes_by_asset_key
 
 def get_current_logical_version(node: ExternalAssetNode, instance: DagsterInstance) -> Optional[LogicalVersion]:
     event = instance.get_latest_logical_version_record(
-        self._external_asset_node.asset_key,
-        self._external_asset_node.is_source,
+        node.asset_key,
+        node.is_source,
     )
-    if event is None and self._external_asset_node.is_source:
+    if event is None and node.is_source:
         return DEFAULT_LOGICAL_VERSION
     elif event is None:
         return None
